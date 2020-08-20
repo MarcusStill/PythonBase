@@ -20,56 +20,42 @@ def time_decorators(func):
 
 
 def expon(numbers, e):
-    exp = [i ** e for i in range(len(numbers) + 1)]
-    exp = exp[1:]
+    exp = [i ** e for i in numbers]
     return exp
 
 
 def test_numbers(number_list, var):
     array2 = []
     if var == 1:
-        [array2.append(x) for x in range(len(number_list)) if x % 2 == 0]
-        array2 = array2[1:]
+        [array2.append(x) for x in number_list if x % 2 != 0]
     elif var == 2:
-        [array2.append(x) for x in range(len(number_list)) if x % 2 != 0]
+        [array2.append(x) for x in number_list if x % 2 != 0]
     elif var == 3:
-        [array2.append(number_list[x]) for x in range(len(number_list)) if (prime(number_list[x]) == True and number_list[x] > 1)]
+        [array2.append(x) for x in number_list if (prime(x) == True and x > 1)]
     return array2
-
-def test_input(number):
-    return number.isdigit()
 
 
 print('Home work lession 3')
-menu = str(input('Select option: \n 1 - Exponentation numbers, 2 - Test numbers\n'))
-if test_input(menu) == True:
-    if int(menu) == 1:
-        array = list(map(int, input('Input list: ').split()))
-        e = str(input('Input exp: '))
-        if test_input(e) == True:
-            e = int(e)
-            starttimer = int(input('Start timer? \n 1 - Yes, 2 - No\n'))
-            print('Exponentiation list:\n')
-            if starttimer == 1:
-                timer = time_decorators(expon)
-                print(timer(array, e))
-            else:
-                print(expon(array, e))
-        else:
-            print('Error input expon')
-    elif int(menu) == 2:
-        array = list(map(int, input('Input list: ').split()))
-        option = str(input('Select option: \n 1 - even, 2 - not even, 3 - prime\n'))
-        if test_input(option) == True:
-            starttimer = int(input('Start timer? \n 1 - Yes, 2 - No\n'))
-            if starttimer == 1:
-                timer = time_decorators(test_numbers)
-                print(timer(array, option))
-            else:
-                print(test_numbers(array, option))
-        else:
-            print('Error input option')
+menu = int(input('Select optio1n: \n 1 - Exponentation numbers, 2 - Test numbers\n'))
+if menu == 1:
+    array = list(map(int, input('Input list: ').split()))
+    e = int(input('Input exp: '))
+    starttimer = int(input('Start timer? \n 1 - Yes, 2 - No\n'))
+    print('Exponentiation list:\n')
+    if starttimer == 1:
+        timer = time_decorators(expon)
+        print(timer(array, e))
     else:
-        print('Error input menu')
-else:
-    print('Error input menu: only digit')
+        exp_list = [i ** e for i in array]
+        print(exp_list)
+elif menu == 2:
+    array = list(map(int, input('Input list: ').split()))
+    option = int(input('Select option: \n 1 - even, 2 - not even, 3 - prime\n'))
+    starttimer = int(input('Start timer? \n 1 - Yes, 2 - No\n'))
+    if starttimer == 1:
+        timer = time_decorators(test_numbers)
+        print(timer(array, option))
+    else:
+        print(test_numbers(array, option))
+else    :
+    print('Error')

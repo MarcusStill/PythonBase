@@ -1,9 +1,9 @@
 from time import time
 
+# rewrote
 def expon(numbers, e):
-    for i in range(len(numbers)):
-        exp = int(numbers[i]) ** e
-        print(exp, '\n')
+    exp = [i ** e for i in range(len(numbers) + 1)]
+    exp = exp[1:]
     return exp
 
 def prime(numbers):
@@ -29,11 +29,13 @@ def test_numbers(number_list, var):
     if var == 1:
         for i in range(len(number_list)):
             if int(number_list[i]) % 2 == 0:
-                print(int(number_list[i]), end=' ')
+                array2.append(int(array[i]))
+        print(array2)
     elif var == 2:
         for i in range(len(number_list)):
             if int(number_list[i]) % 2 != 0:
-                print(number_list[i], end=' ')
+                array2.append(int(array[i]))
+        print(array2)
     elif var == 3:
         for i in range(len(number_list)):
             if int(number_list[i]) != 1:
@@ -43,29 +45,31 @@ def test_numbers(number_list, var):
 
 print('Home work lession 3')
 print('Select optio1n: \n 1 - Exponentation numbers, 2 - Test numbers')
-m = int(input())
-if m == 1:
+menu = int(input())
+if menu == 1:
     print('Input list:')
     array = input().split()
     print('Input exp:')
     e = int(input())
     print('Start timer? \n 1 - Yes, 2 - No')
-    t = int(input())
+    starttimer = int(input())
     print('Exponentiation list:\n')
-    if t == 1:
+    if starttimer == 1:
         timer = time_decorators(expon)
-        timer(array, e)
+        print(timer(array, e))
     else:
-        expon(array, e)
-if m == 2:
+        print(expon(array, e))
+elif menu == 2:
     print('Input list:')
     array = input().split()
     print('Select option: \n 1 - even, 2 - not even, 3 - prime')
     o = int(input())
     print('Start timer? \n 1 - Yes, 2 - No')
-    t2 = int(input())
-    if t2 == 1:
+    starttimer = int(input())
+    if starttimer == 1:
         timer = time_decorators(test_numbers)
         timer(array, o)
     else:
         test_numbers(array, o)
+else    :
+    print('Error')

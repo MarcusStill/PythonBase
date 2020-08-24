@@ -25,12 +25,12 @@ def expon(numbers, e):
 
 
 def test_numbers(number_list, var):
-    array2 = []
     if var == 1:
-        [array2.append(x) for x in number_list if x % 2 != 0]
+        array2 = list(filter(lambda x: x % 2 == 0, number_list))
     elif var == 2:
-        [array2.append(x) for x in number_list if x % 2 != 0]
+        array2 = list(filter(lambda x: x % 2 != 0, number_list))
     elif var == 3:
+        array2 = []
         [array2.append(x) for x in number_list if (prime(x) == True and x > 1)]
     return array2
 

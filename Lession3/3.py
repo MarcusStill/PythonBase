@@ -1,8 +1,8 @@
 from time import time
 
-FILTER_EVEN = []
-FILTER_NOT_EVEN = []
-FILTER_PRIME = []
+FILTER_EVEN = 'even'
+FILTER_NOT_EVEN = 'odd'
+FILTER_PRIME = 'prime'
 
 def prime(numbers):
     d = 2
@@ -29,19 +29,20 @@ def time_decorators(func):
     return new_func
 
 
-def expon(numbers, e):
+def expon(*numbers, e):
     exp = [i ** e for i in numbers]
     return exp
 
 
 def test_numbers(number_list, var):
+    res = []
     if var == FILTER_EVEN:
-        array2 = list(filter(lambda x: x % 2 == 0, number_list))
+        res = list(filter(lambda x: x % 2 == 0, number_list))
     elif var == FILTER_NOT_EVEN:
-        array2 = list(filter(lambda x: x % 2 != 0, number_list))
+        res = list(filter(lambda x: x % 2 != 0, number_list))
     elif var == FILTER_PRIME:
-        array2 = prime_check(prime, array)
-    return array2
+        res = prime_check(prime, array)
+    return res
 
 
 print('Home work lession 3')
@@ -60,7 +61,6 @@ if menu == 1:
 elif menu == 2:
     option = int(input('Select option: \n 1 - even, 2 - not even, 3 - prime\n'))
     if option == 1:
-        FILTER_EVEN = option
         starttimer = int(input('Start timer? \n 1 - Yes, 2 - No\n'))
         if starttimer == 1:
             timer = time_decorators(test_numbers)
@@ -68,7 +68,6 @@ elif menu == 2:
         else:
             print(test_numbers(array, FILTER_EVEN))
     if option == 2:
-        FILTER_NOT_EVEN = option
         starttimer = int(input('Start timer? \n 1 - Yes, 2 - No\n'))
         if starttimer == 1:
             timer = time_decorators(test_numbers)
@@ -76,7 +75,6 @@ elif menu == 2:
         else:
             print(test_numbers(array, FILTER_NOT_EVEN))
     if option == 3:
-        FILTER_PRIME = option
         starttimer = int(input('Start timer? \n 1 - Yes, 2 - No\n'))
         if starttimer == 1:
             timer = time_decorators(test_numbers)

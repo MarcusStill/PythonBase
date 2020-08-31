@@ -12,9 +12,7 @@ def prime(numbers):
 
 
 def prime_check(func, numbers):
-    prime_list = []
-    [prime_list.append(x) for x in array if (prime(x) == True and x > 1)]
-    return prime_list
+    return [x for x in array if (x > 1 and prime(x))]
 
 
 def time_decorators(func):

@@ -1,17 +1,28 @@
-print('Home work lession 3')
+print('Home work lesson 3')
 
-class Transport():
-    def __init__(self, name, type, weight, loading_capacity):
-        self.name = name
-        self.type = type
-        self.weight = weight
-        self.loadinh_capaciry = loading_capacity
+class Bicycle():
 
-    def make_a_sound(self):
-        print(f"{self.name} make a sound 'bi-bi'")
+    def __init__(self, brand, model, category, wheels, year):
+        self.brand = brand
+        self.model = model
+        self.category = category
+        self.wheels = wheels
+        self.year = year
+        self.odometr = 0
 
-car = Transport('Skoda', 'passenger', '1100 kg', '500 kg')
-car.make_a_sound()
 
-plane = Transport('AN-22', 'cargo', '118000 kg', '80000 kg')
-ship = Transport('Titanik', 'passendger', '52000 t', '200000 kg')
+    def get_description(self):
+        full_name = f"{self.brand} {self.model} {self.category} {self.wheels}"
+        return full_name.title()
+
+    def read_odometr(self):
+        print(f'This bicycle has {self.odometr} km on it.')
+
+    def update_odometr(self, km):
+        self.odometr = km
+
+bicycle_1 = Bicycle('GT', 'Aggressor', 'mountain', '27', '2019')
+print(bicycle_1.get_description())
+bicycle_1.update_odometr(5)
+bicycle_1.read_odometr()
+

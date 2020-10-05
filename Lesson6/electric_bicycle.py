@@ -1,7 +1,6 @@
 from bicycle import Bicycle
 
 class ElectricBicycle(Bicycle):
-    #def __init__(self, brand, model, wheels, year, motor, battery, mileage):
     def __init__(self, brand, model, year):
         super().__init__(brand, model, year)
         self.motor = motor

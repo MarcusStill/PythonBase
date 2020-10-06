@@ -1,16 +1,15 @@
 class Bicycle():
 
-    def __init__(self, brand, model, category, wheels, year):
+    def __init__(self, brand, model, category, wheels):
         self.brand = brand
         self.model = model
         self.category = category
         self.wheels = wheels
-        self.year = year
         self.odometr = 0
 
 
     def get_description(self):
-        full_name = f"{self.brand} {self.model} {self.category} {self.wheels}"
+        full_name = f"{self.brand} {self.model}, категория {self.category}, диаметр колеса {self.wheels}"
         return full_name.title()
 
     def read_odometr(self):

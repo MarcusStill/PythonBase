@@ -1,4 +1,5 @@
 from bicycle import Bicycle
+from exeptions import MyError
 
 class Battery():
 
@@ -6,14 +7,14 @@ class Battery():
         self.battery_size = battery_size
 
     def describe_battery(self):
-        print(f"Этот велосипед имеет аккумулятор емкостью {self.battery_size} Ah.")
+        print(f"Этот велосипед имеет аккумулятор емкостью {self.battery_size} Ah.\n")
 
     def get_range(self):
         if self.battery_size == 7:
             range = 25
         elif self.battery_size == 10:
             range = 40
-        print(f"Этот велосипед проедет примерно {range} km на полном заряде аккумулятора.")
+        print(f"Этот велосипед проедет примерно {range} km на полном заряде аккумулятора.\n")
 
 
 class ElectricBicycle(Bicycle):
@@ -25,27 +26,26 @@ class ElectricBicycle(Bicycle):
         self.odometr = 0
         self.battery = Battery()
 
-    def get_description(self):
-        specification = f"{self.brand} {self.model}, категория {self.category}, диаметр колеса {self.wheels},  мотор {self.motor} Вт, Запас хода {self.mileage} км."
-        return specification.title()
+    def __str__(self):
+        return f'Велосипед {self.brand} {self.model}, категория {self.category}, диаметр колеса {self.wheels},  мотор {self.motor} Вт, емкость аккумулятора {self.mileage} Ah.\n'
 
     def read_odometr(self):
-        print(f'Этот велосипед проехал {self.odometr} км.')
+        print(f'Велосипед {self.brand} {self.model} проехал {self.odometr} км.\n')
 
     def drive(self, km):
         if self.mileage >= km:
             self.odometr += km
             self.mileage -= km
         else:
-            print('Батарея разряжена. Зарядите аккумулятор!')
+            print(f'Батарея велосипеда {self.brand} {self.model} разряжена. Зарядите аккумулятор!\n')
 
     def charge_battery(self):
         if self.battery.battery_size == 7:
             self.mileage=25
-            print('Батарея заряжена!')
+            print(f'Батарея велосипеда {self.brand} {self.model} заряжена!\n')
         elif self.battery.battery_size == 10:
             self.mileage=40
-            print('Батарея заряжена!')
+            print(f'Батарея велосипеда {self.brand} {self.model} заряжена!\n')
 
     def battery_info(self):
-        print(f'Запас хода {self.mileage} км.')
+        print(f'Запас хода велосипеда {self.brand} {self.model} составляет {self.mileage} км.\n')

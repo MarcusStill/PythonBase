@@ -1,7 +1,8 @@
 from datetime import datetime, date
 
 def calculate_age(birth_date):
-    birth_date = datetime.strptime(birth_date, "%d/%m/%Y")
+    #birth_date = datetime.strptime(birth_date, "%d/%m/%Y")
+    birth_date = datetime.strptime(birth_date, "%Y-%m-%d")
     today = date.today()
     age = today.year - birth_date.year
     if today.month < birth_date.month or today.month == birth_date.month and today.day < birth_date.day:
@@ -20,6 +21,6 @@ def check_age(func):
     return
 
 
-res = check_age(calculate_age('4/8/2018'))
-res1 = check_age(calculate_age('4/8/2014'))
-res2 = check_age(calculate_age('4/8/2010'))
+res = check_age(calculate_age('2018-8-4'))
+res1 = check_age(calculate_age('2016-8-4'))
+res2 = check_age(calculate_age('2010-8-4'))

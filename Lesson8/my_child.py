@@ -1,6 +1,3 @@
-#from datetime import datetime, date
-
-
 class Child():
 
     def __init__(self, first_name, last_name, birth_date, gender):
@@ -18,11 +15,6 @@ class Child():
 
     def greeting(self):
         print(f"Меня зовут {self.first_name} {self.last_name}.")
-
-
-    # def calculate_age(birth_date):
-    #     today = date.today()
-    #     return today.year - child_i.birth_date.year - ((today.month, today.day) < (child_i.birth_date.month, child_i.birth_date.day))
 
 
     def read_visit(self):

@@ -3,9 +3,6 @@ from datetime import datetime, date
 from my_child import Child, Parent
 from my_ticket import TicketParent, TicketChild
 
-
-is_valid_name = r'[^а-яА-ЯёЁ]'
-is_valid_number = r'[8-9]{1}[0-9]{9}'
 ERROR_INPUT = "Ошибка ввода! Вы ввели не число. Попробуйте еще раз."
 
 
@@ -18,6 +15,7 @@ def calculate_age(birth_date):
         age -= 1
     return age
 
+
 ''' Определение вариантов посещения. '''
 def check_age(func):
     print("Возраст посетителя", func, end=" лет. ")
@@ -29,14 +27,22 @@ def check_age(func):
         print("Возможно самостоятельное посещение.")
     return
 
+
 def word_check(word):
-    if re.search(is_valid_name, word):
+    if re.search(r'[^а-яА-ЯёЁ]', word):
         raise ValueError("Ошибка ввода! Буквы должны быть только русского алфавита.")
 
 
 def number_check(number):
-    if re.search(is_valid_number, number) and len(number) == 10:
+    if re.search(r'(\+7|8)(\d{10})', number) and len(number) == 10:
         raise ValueError("Ошибка ввода! Номер должен быть длиной 10 знаков и начинаться с 8 или 9.")
+
+
+def date_check(date):
+    try:
+        return datetime.strptime(date, '%Y-%m-%d')
+    except ValueError:
+        print("Ошибка ввода! Введите дату корректно.")
 
 
 """ Создание экземпляра класса Child"""
@@ -47,24 +53,22 @@ def create_child_instance():
     last_name = input('Введите фамилию: ')
     word_check(last_name)
     date_entry = input('Введите дату в формате ГГГГ-ММ-ДД: ')
+    date_check(date_entry)
     year, month, day = map(int, date_entry.split('-'))
     birth_date = date(year, month, day)
-    gender = ""
     try:
-        gen = input('Выберите пол (1 - мужской, 2 - женский): ')
+        gen = int(input('Выберите пол (1 - мужской, 2 - женский): '))
     except ValueError:
         print(ERROR_INPUT)
-    else:
-        print(gen)
-        if gen == 1:
-            gender = 'муж'
-        elif gen == 2:
-            gender = 'жен'
-        #else:
-        #    raise ValueError("Ошибка ввода! Введите 1 или 2") срабатывает ValueError
-        child = Child(first_name, last_name, birth_date, gender)
-        return child
-
+    gender = ""
+    if gen == 1:
+        gender = 'муж'
+    elif gen == 2:
+        gender = 'жен'
+    elif (gen != 1) and (gen != 2):
+        raise ValueError("Ошибка ввода! Введите 1 или 2.")
+    child = Child(first_name, last_name, birth_date, gender)
+    return child
 
 
 """ Создание экземпляра класса Parent"""
@@ -74,22 +78,30 @@ def create_parent_instance():
     word_check(first_name)
     last_name = input('Введите фамилию: ')
     word_check(last_name)
-    birth_date = datetime.strptime(input('Введите дату в формате ГГГГ-ММ-ДД: '), "%Y-%m-%d")
-    gen = input('Выберите пол (1 - мужской, 2 - женский): ')
+    date_entry = input('Введите дату в формате ГГГГ-ММ-ДД: ')
+    date_check(date_entry)
+    year, month, day = map(int, date_entry.split('-'))
+    birth_date = date(year, month, day)
+    gen = int(input('Выберите пол (1 - мужской, 2 - женский): '))
     gender = ""
     if gen == 1:
         gender = 'муж'
-    if gen == 2:
+    elif gen == 2:
         gender = 'жен'
+    elif (gen != 1) and (gen != 2):
+        raise ValueError("Ошибка ввода! Введите 1 или 2")
     phone = input('Введите номер телефона: ')
     number_check(phone)
-    cat = input('Вы имеете льготы? Если да, укажите их (1 - инвалид, 2 - многодетный): ') #WAF?!
-    if cat == 1:
-        category = "инвалид"
-    elif cat == 2:
-        category = "многодетный"
+    cat = int(input('Вы имеете льготы? Если да, укажите их (1 - инвалид, 2 - многодетный, 3 - нет): '))
+    if (cat != 1) and (cat != 2) and (cat != 3):
+        raise ValueError("Ошибка ввода! Введите 1, 2 или 3")
     else:
-        category = ""
+        if cat == 1:
+            category = "инвалид"
+        elif cat == 2:
+            category = "многодетный"
+        elif cat == 3:
+            category = ""
     parent = Parent(first_name, last_name, birth_date, gender, phone, category)
     return parent
 
@@ -117,51 +129,57 @@ if __name__ == '__main__':
             except ValueError:
                 print(ERROR_INPUT)
             else:
-                while j != 1:
-                    try:
-                        pos = int(input('Выберите категорию посетителя (1 - ребенок, 2 - взрослый): '))
-                    except ValueError:
-                        print(ERROR_INPUT)
-                    else:
-                        if pos == 1:
-                            child_i = create_child_instance()
-                            if calculate_age_manual(child_i.birth_date) >= 7:
-                                print("Возможно самостоятельное посещение.")
-                                ticket_child_i = TicketChild(i, datetime.now(), duration, child_i.first_name, child_i.last_name)
-                                print(ticket_child_i.get_description())
-                                companion = 1
-                            elif 4 <= calculate_age_manual(child_i.birth_date) < 7:
-                                if companion == 1:
-                                    print("Возможно посещение в сопровождении старшего ребенка.")
+                if (duration != 1) and (duration != 2) and (duration != 3):
+                    raise ValueError("Ошибка ввода! Введите 1, 2 или 3")
+                else:
+                    while j != 1:
+                        try:
+                            pos = int(input('Выберите категорию посетителя (1 - ребенок, 2 - взрослый): '))
+                        except ValueError:
+                            print(ERROR_INPUT)
+                        else:
+                            if pos == 1:
+                                child_i = create_child_instance()
+                                if calculate_age_manual(child_i.birth_date) >= 7:
+                                    print("Возможно самостоятельное посещение.")
                                     ticket_child_i = TicketChild(i, datetime.now(), duration, child_i.first_name, child_i.last_name)
                                     print(ticket_child_i.get_description())
+                                    companion = 1
+                                elif 4 <= calculate_age_manual(child_i.birth_date) < 7:
+                                    if companion == 1:
+                                        print("Возможно посещение в сопровождении старшего ребенка.")
+                                        ticket_child_i = TicketChild(i, datetime.now(), duration, child_i.first_name, child_i.last_name)
+                                        print(ticket_child_i.get_description())
+                                    else:
+                                        print("Возможно только посещение в сопровождении взрослого.")
+                                        parent_i = create_parent_instance()
+                                        tick_parent_i = TicketParent(i, datetime.now(), duration, parent_i.first_name, parent_i.last_name, parent_i.category)
+                                        print(tick_parent_i.get_description())
+                                        if parent_i.category != "":
+                                            print('Вам положена скидка!')
                                 else:
-                                    print("Возможно только посещение в сопровождении взрослого.")
+                                    print("Возможна только экскурсия по детскому центру в сопровождении взрослого.")
+                                    #TicketExcursion
+                            elif pos == 2:
+                                if i == 1:
                                     parent_i = create_parent_instance()
-                                    tick_parent_i = TicketParent(i, datetime.now(), duration, parent_i.first_name, parent_i.last_name, parent_i.category)
+                                    tick_parent_i = TicketParent(i, datetime.now(), duration, parent_i.first_name,
+                                    parent_i.last_name, parent_i.category)
                                     print(tick_parent_i.get_description())
-                                    if parent_i.category != "":
-                                        print('Вам положена скидка!')
+                                    print("Вы на экскурсии")
+                                else:
+                                    parent_i = create_parent_instance()
+                                    tick_parent_i = TicketParent(1, datetime.now(), duration, parent_i.first_name, parent_i.last_name,
+                                                                 parent_i.category)
+                                    print(tick_parent_i.get_description())
                             else:
-                                print("Возможна только экскурсия по детскому центру в сопровождении взрослого.")
-                                #TicketExcursion
-                        elif pos == 2:
-                            if i == 1:
-                                print("Вы на экскурсии")
-                                #TicketExcursion
-                            else:
-                                parent_i = create_parent_instance()
-                                tick_parent_i = TicketParent(1, datetime.now(), duration, parent_i.first_name, parent_i.last_name,
-                                                             parent_i.category)
-                                print(tick_parent_i.get_description())
-                        else:
-                            raise ValueError("Ошибка ввода! Введите 1 или 2")
-                        add = int(input('Добавить еще посетителя? \n 1 - Да, 2 - Нет\n'))
-                        if add == 1:
-                            i = i + 1
-                        if add == 2:
-                            print("Держите билеты. Надеемся что вам все понравится.")
-                            j = 1
+                                raise ValueError("Ошибка ввода! Введите 1 или 2")
+                            add = int(input('Добавить еще посетителя? \n 1 - Да, 2 - Нет\n'))
+                            if add == 1:
+                                i = i + 1
+                            if add == 2:
+                                print("Держите билеты. Надеемся что вам все понравится.")
+                                j = 1
         elif menu == 2:
             child_0 = Child("Иван", "Иванов", "2014-08-04", "муж")
             child_0.greeting()

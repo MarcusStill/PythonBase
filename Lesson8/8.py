@@ -1,13 +1,14 @@
+"""Основной модуль домашнего задания темы Датаклассы."""
 import re
 from datetime import datetime, date
 from my_child import Child, Parent
-from my_ticket import TicketParent, TicketChild
+from my_ticket import TicketParent, TicketChild, TicketExcursion
 
 ERROR_INPUT = "Ошибка ввода! Вы ввели не число. Попробуйте еще раз."
 
 
-''' Вычисление возраста для тестового набора данных'''
 def calculate_age(birth_date):
+    """Вычисление возраста посетителя для тестового набора данных."""
     birth_date = datetime.strptime(birth_date, "%Y-%m-%d")
     today = date.today()
     age = today.year - birth_date.year
@@ -16,8 +17,8 @@ def calculate_age(birth_date):
     return age
 
 
-''' Определение вариантов посещения. '''
 def check_age(func):
+    """Определение вариантов посещения."""
     print("Возраст посетителя", func, end=" лет. ")
     if func < 4:
         print("Возможна только экскурсия по детскому центру в сопровождении взрослого.")
@@ -29,24 +30,27 @@ def check_age(func):
 
 
 def word_check(word):
+    """Введенные данные должны состоять только из букв русского алфавита."""
     if re.search(r'[^а-яА-ЯёЁ]', word):
         raise ValueError("Ошибка ввода! Буквы должны быть только русского алфавита.")
 
 
 def number_check(number):
+    """Номер телефона должен начинаться с префикса "+7" или цифры 8 и иметь длину 10 цифр."""
     if re.search(r'(\+7|8)(\d{10})', number) and len(number) == 10:
         raise ValueError("Ошибка ввода! Номер должен быть длиной 10 знаков и начинаться с 8 или 9.")
 
 
 def date_check(date):
+    """Проверка правильности ввода даты."""
     try:
         return datetime.strptime(date, '%Y-%m-%d')
     except ValueError:
         print("Ошибка ввода! Введите дату корректно.")
 
 
-""" Создание экземпляра класса Child"""
 def create_child_instance():
+    """Создание экземпляра класса Child."""
     print("Введите данные старшего ребенка.")
     first_name = input('Введите имя: ')
     word_check(first_name)
@@ -71,8 +75,8 @@ def create_child_instance():
     return child
 
 
-""" Создание экземпляра класса Parent"""
 def create_parent_instance():
+    """Создание экземпляра класса Parent."""
     print("Введите данные взрослого.")
     first_name = input('Введите имя: ')
     word_check(first_name)
@@ -106,8 +110,8 @@ def create_parent_instance():
     return parent
 
 
-""" Вычисления возраста посетителя"""
 def calculate_age_manual(birth_date):
+    """Определение возраста посетителя."""
     today = date.today()
     return today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
 
@@ -140,33 +144,43 @@ if __name__ == '__main__':
                         else:
                             if pos == 1:
                                 child_i = create_child_instance()
+                                #Проверяем возможность посещения в соответствии с возрастом ребенка
                                 if calculate_age_manual(child_i.birth_date) >= 7:
                                     print("Возможно самостоятельное посещение.")
                                     ticket_child_i = TicketChild(i, datetime.now(), duration, child_i.first_name, child_i.last_name)
                                     print(ticket_child_i.get_description())
+                                    #companion нужен для сопровождения младшего ребенка старшим
                                     companion = 1
                                 elif 4 <= calculate_age_manual(child_i.birth_date) < 7:
+                                    #взрослый не нужен, если companion уже присуствует
                                     if companion == 1:
                                         print("Возможно посещение в сопровождении старшего ребенка.")
                                         ticket_child_i = TicketChild(i, datetime.now(), duration, child_i.first_name, child_i.last_name)
                                         print(ticket_child_i.get_description())
                                     else:
                                         print("Возможно только посещение в сопровождении взрослого.")
+                                        #оформляем экскурсионный билет только для взрослого
                                         parent_i = create_parent_instance()
                                         tick_parent_i = TicketParent(i, datetime.now(), duration, parent_i.first_name, parent_i.last_name, parent_i.category)
                                         print(tick_parent_i.get_description())
                                         if parent_i.category != "":
+                                            #доработать функционал категорий посетителей
                                             print('Вам положена скидка!')
                                 else:
-                                    print("Возможна только экскурсия по детскому центру в сопровождении взрослого.")
-                                    #TicketExcursion
+                                    print("Возможна только экскурсия по детскому центру продолжительностью 1 час и в сопровождении взрослого.")
+                                    duration = 1
+                                    parent_i = create_parent_instance()
+                                    ticket_exc_child_i = TicketExcursion(i, datetime.now(), child_i.first_name, child_i.last_name)
+                                    ticket_exc_parent_i = TicketExcursion(i, datetime.now(), child_i.first_name, child_i.last_name)
+                                    print(ticket_exc_child_i.get_description())
+                                    print(ticket_exc_parent_i.get_description())
                             elif pos == 2:
                                 if i == 1:
                                     parent_i = create_parent_instance()
                                     tick_parent_i = TicketParent(i, datetime.now(), duration, parent_i.first_name,
                                     parent_i.last_name, parent_i.category)
                                     print(tick_parent_i.get_description())
-                                    print("Вы на экскурсии")
+                                    print("Держите билеты. Проходите на экскурсию.")
                                 else:
                                     parent_i = create_parent_instance()
                                     tick_parent_i = TicketParent(1, datetime.now(), duration, parent_i.first_name, parent_i.last_name,
@@ -175,6 +189,7 @@ if __name__ == '__main__':
                             else:
                                 raise ValueError("Ошибка ввода! Введите 1 или 2")
                             add = int(input('Добавить еще посетителя? \n 1 - Да, 2 - Нет\n'))
+                            #доработать функционал добавления еще одного посетителя в случае если посещение экскурсионное.
                             if add == 1:
                                 i = i + 1
                             if add == 2:
@@ -186,7 +201,8 @@ if __name__ == '__main__':
             print(child_0.get_description())
             child_0.read_visit()
             calculate_age(child_0.birth_date)
-            check_age(calculate_age(child_0.birth_date))  # Проверка возможности посещения
+            #Проверяем возможность посещения в соответствии с возрастом ребенка
+            check_age(calculate_age(child_0.birth_date))
             if (calculate_age(child_0.birth_date))>=4:
                 ticket_child_1 = TicketChild(1, datetime.now(), 1, child_0.first_name, child_0.last_name)
                 print(ticket_child_1.get_description())

@@ -1,12 +1,12 @@
+# from db import *
 from api import *
 #Win10 Traceback (most recent call last)
 from functools import wraps
 from asyncio.proactor_events import _ProactorBasePipeTransport
+
 from sqlalchemy import create_engine, Column, Integer, String, MetaData, ForeignKey
 from sqlalchemy.orm import sessionmaker, scoped_session, relationship, session
 from sqlalchemy.ext.declarative import declarative_base
-
-from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
 engine = create_engine("sqlite:///quote.db", echo=True)
 Base = declarative_base(bind=engine)
@@ -47,6 +47,8 @@ def create_quote(text: str, author_id: int, created_at: str) -> Quote:
     print("id after", new_quote.id)
     return new_quote
 
+
+
 #Win10 Traceback (most recent call last)
 def silence_event_loop_closed(func):
     @wraps(func)
@@ -58,10 +60,10 @@ def silence_event_loop_closed(func):
                 raise
     return wrapper
 
+
 if __name__ == "__main__":
     Base.metadata.create_all(engine)
-    print(
-        "Запрашиваем случайные цитаты с сайта favqs.com. Поиск останавливается когда номер цитаты без остатка делится на число 'n'.")
+    print("Запрашиваем случайные цитаты с сайта favqs.com. Поиск останавливается когда номер цитаты без остатка делится на число 'n'.")
     n = int(input('Введите число n: '))
     k = 0
     while k != 1:
@@ -70,18 +72,39 @@ if __name__ == "__main__":
         if id % n == 0:
             k = 1
             logger.info("Result. Id qoute: {}. Author: {}. Quote: {}", quote['id'], quote['author'], quote['body'])
-            # print(quote['id'])
+            #print(quote['id'])
             search_quote = quote['id']
             search_author = quote['author']
             insert_quote = quote['body']
 
+
     # Win10 Traceback (most recent call last)
     _ProactorBasePipeTransport.__del__ = silence_event_loop_closed(_ProactorBasePipeTransport.__del__)
 
+
     session = Session()
-    """
-    Логика
-    """
+    # # new_author = create_author("Bob Marley")
+    # print("Print all Author")
+    # for instance in session.query(Author).order_by(Author.id):
+    #     print("id", instance.id, instance.name)
+    # # new_quote = create_quote("Life is good", "1", "2021-03-02")
+    # # new_quote = create_quote("No Woman, no cry", "1", "2021-03-03")
+    #
+    # print("Print all quote one author")
+    # for instance in session.query(Quote).order_by(Quote.id):
+    #     print("id", instance.id, instance.text, "author_id", instance.author_id, instance.created_at)
+    #
+    # print("Print all quotes one Author")
+    # query = session.query(Author, Quote)
+    # query = query.join(Quote, Quote.author_id == Author.id)
+    # records = query.all()
+    # print(records)
+    # for author, quote in records:
+    #     print(author.name, "-", quote.text)
+    #
+    # """
+    # Логика
+    # """
     result = 0
     print("Ищем в БД цитату с id", search_quote)
     for Quote in session.query(Quote.id).filter_by(id=search_quote):
@@ -93,11 +116,11 @@ if __name__ == "__main__":
             result = 2
         if result == 2:
             print('Запрашиваемый автор в БД не найден')
-            # new_author = create_author(search_author)
+            #new_author = create_author(search_author)
             new_author = create_author("12345")
-            # new_author = create_author(search_author)
-            # new_quote = create_quote(insert_quote, new_author.id, "2021-03-05")
-            # new_author.id
+            #new_author = create_author(search_author)
+            #new_quote = create_quote(insert_quote, new_author.id, "2021-03-05")
+            #new_author.id
         else:
             print('Запрашиваемый автор в БД найден')
     else:
@@ -105,54 +128,11 @@ if __name__ == "__main__":
 
     session.close()
 
-#     session = Session()
-#     new_author = create_author("Bob Marley")
-#     print("Print all Author")
-#     for instance in session.query(Author).order_by(Author.id):
-#         print("id", instance.id, instance.name)
-#     #new_quote = create_quote("Life is good", "1", "2021-03-02")
-#     #new_quote = create_quote("No Woman, no cry", "1", "2021-03-03")
-#
-#
-#     print("Print all quote one author")
-#     for instance in session.query(Quote).order_by(Quote.id):
-#         print("id", instance.id, instance.text, "author_id", instance.author_id, instance.created_at)
-#
-#
-#     print("Print all quotes one Author")
-#     query = session.query(Author, Quote)
-#     query = query.join(Quote, Quote.author_id == Author.id)
-#     records = query.all()
-#     print(records)
-#     for author, quote in records:
-#         print(author.name, "-", quote.text)
-#
-#
-#     """
-#     123
-#     """
-#     quote_search = 4
-#     result = 0
-#     print("Ищем цитату с id", quote_search)
-#     #for Quote in session.query(Quote.id).filter_by(id=quote_search):
-#         #print("Объект внесен в БД")
-#     for Quote in session.query(Quote.id).filter_by(id=quote_search):
-#         result = 1
-#     if not result:
-#         print('No result found')
-#         for Quote in session.query(Author.name).filter_by(name=quote_search):
-#             result = 1
-#     else:
-#         print("Запись найдена")
-#
-#
-#
-#     session.close()
-#
-#     """
-#     Добавление цитаты.
-#         - поиск в БД по номеру. Если цитата с таким номером есть  -->  не вносим.
-#         - если номера в БД нет --> Ищем автора. Если такой автор есть, то берем его номер и записываем цитату.
-#         - если автора нет  --> вносим автора, берем его номер и записываем цитату.
-#
-#     """
+    """
+    Добавление цитаты.
+        - поиск в БД по номеру. Если цитата с таким номером есть  -->  не вносим.
+        - если номера в БД нет --> Ищем автора. Если такой автор есть, то берем его номер и записываем цитату.
+        - если автора нет  --> вносим автора, берем его номер и записываем цитату.
+
+    """
+

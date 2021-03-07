@@ -1,12 +1,13 @@
 from api import *
 import datetime
 import asyncio
+from beautifultable import BeautifulTable
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import sessionmaker, scoped_session, relationship
 from sqlalchemy.ext.declarative import declarative_base
 
 
-engine = create_engine("sqlite:///quote3.db", echo=True)
+engine = create_engine("sqlite:///quote3.db", echo=False)
 Base = declarative_base(bind=engine)
 session_factory = sessionmaker(bind=engine)
 Session = scoped_session(session_factory)
@@ -57,59 +58,98 @@ def create_quote(text: str, author_id: int, tag_id: int) -> Quote:
 
 
 if __name__ == "__main__":
-    try:
-        print("Запрашиваем случайные цитаты с сайта favqs.com. Поиск останавливается когда номер цитаты без остатка делится на число 'n'.")
-        n = int(input('Введите число n: '))
-        k = 0
-        while k != 1:
-            quote = asyncio.run(get_quote())
-            id = int(quote['id'])
-            if id % n == 0:
-                k = 1
-                print("Результат. Id цитаты:", quote['id'], "Автор:", quote['author'], "Теги:", quote['tags'], "Текст:", quote['body'])
-                search_id = quote['id']
-                search_author = quote['author']
-                tag_list = quote['tags']
-                if not tag_list:
-                    tag_list = '-'
-                else:
-                    search_tag = (', '.join(tag_list))
-                search_quote = quote['body']
-    except:
-        print("Ошибка при обращении к api. Сервис недоступен.")
+    Base.metadata.create_all(engine)
+    menu = int(input('Меню: 1 - работа с api, 2 - запрос информации из БД по авторам, 3 - запрос информации из БД по тегам. Ваш выбор: '))
+    if (menu != 1) and (menu != 2) and (menu != 3):
+        raise ValueError("Ошибка ввода! Введите 1, 2 или 3")
     else:
-        Base.metadata.create_all(engine)
-        session = Session()
-        print("Ищем в БД цитату с id", search_id)
-        s_id = session.query(Quote).filter_by(id=search_id).first()
-        if not s_id:
-            print("Цитата не найдена.")
-            print("Ищем автора")
-            s_author = session.query(Author).filter_by(name=search_author).first()
-            if not s_author:
-                print("Автор не найден")
-                print("Ищем tag")
-                s_tag = session.query(Tags).filter_by(description=search_tag).first()
-                if not s_tag:
-                    print("Tag не найден")
-                    print("Записываем tag")
-                    create_tag(search_tag)
-                else:
-                    print("Tag найден")
-                print("Записываем автора")
-                create_author(search_author)
-                print("Получаем id автора, tag и записываем цитату")
-                s_author = session.query(Author).filter_by(name=search_author).first()
-                s_tag = session.query(Tags).filter_by(description=search_tag).first()
-                create_quote(search_quote, s_author.id, s_tag.id)
+        if menu == 1:
+            try:
+                print(
+                    "Запрашиваем случайные цитаты с сайта favqs.com. Поиск останавливается когда номер цитаты без остатка делится на число 'n'.")
+                n = int(input('Введите число n: '))
+                k = 0
+                while k != 1:
+                    quote = asyncio.run(get_quote())
+                    id = int(quote['id'])
+                    if id % n == 0:
+                        k = 1
+                        print("Результат. Id цитаты:", quote['id'], "Автор:", quote['author'], "Теги:", quote['tags'],
+                              "Текст:", quote['body'])
+                        search_id = quote['id']
+                        search_author = quote['author']
+                        tag_list = quote['tags']
+                        if not tag_list:
+                            tag_list = '-'
+                        else:
+                            search_tag = (', '.join(tag_list))
+                        search_quote = quote['body']
+            except:
+                print("Ошибка при обращении к api. Сервис недоступен.")
             else:
-                print("Автор найден")
-                print("Получаем id автора, tag и записываем цитату")
-                s_author = session.query(Author).filter_by(name=search_author).first()
-                s_tag = session.query(Tags).filter_by(description=search_tag).first()
-                create_quote(search_quote, s_author.id, s_tag.id)
-        else:
-            print("Цитата найдена. Ничего не делаем")
-        session.close()
-    finally:
-        print("Программа завершила свою работу.")
+                session = Session()
+                print("Ищем в БД цитату с id", search_id)
+                s_id = session.query(Quote).filter_by(id=search_id).first()
+                if not s_id:
+                    print("Цитата не найдена. Ищем автора.")
+                    s_author = session.query(Author).filter_by(name=search_author).first()
+                    if not s_author:
+                        print("Автор не найден. Ищем tag.")
+                        s_tag = session.query(Tags).filter_by(description=search_tag).first()
+                        if not s_tag:
+                            print("Tag не найден. Записываем tag.")
+                            create_tag(search_tag)
+                        else:
+                            print("Tag найден.")
+                        print("Записываем автора.")
+                        create_author(search_author)
+                        print("Получаем id автора, tag и записываем цитату.")
+                        s_author = session.query(Author).filter_by(name=search_author).first()
+                        s_tag = session.query(Tags).filter_by(description=search_tag).first()
+                        create_quote(search_quote, s_author.id, s_tag.id)
+                    else:
+                        print("Автор найден.")
+                        print("Получаем id автора, tag и записываем цитату.")
+                        s_author = session.query(Author).filter_by(name=search_author).first()
+                        s_tag = session.query(Tags).filter_by(description=search_tag).first()
+                        create_quote(search_quote, s_author.id, s_tag.id)
+                else:
+                    print("Цитата найдена в БД. Ничего не делаем.")
+                session.close()
+        elif menu == 2:
+            session = Session()
+            print("Список всех авторов, внесенных в БД.")
+            table = BeautifulTable()
+            for author in session.query(Author).order_by(Author.id):
+                table.rows.append([author.id, author.name])
+            table.columns.header = ["id", "Имя"]
+            print(table)
+            author_id = int(input('Для показа всех цитат одного автора введите его id: '))
+            table = BeautifulTable()
+            query = session.query(Author, Quote)
+            query = query.join(Quote, Quote.author_id == Author.id)
+            records = query.filter_by(author_id=author_id)
+            for author, quote in records:
+                table.rows.append([quote.text])
+            table.columns.header = ["Все записи этого автора"]
+            print(table)
+            session.close()
+        elif menu == 3:
+            session = Session()
+            print("Список всех тегов, внесенных в БД.")
+            table = BeautifulTable()
+            for tags in session.query(Tags).order_by(Tags.id):
+                table.rows.append([tags.id, tags.description])
+            table.columns.header = ["id", "Описание"]
+            print(table)
+            tags_id = int(input('Для показа всех цитат с одним тегом введите его id: '))
+            table = BeautifulTable()
+            query = session.query(Quote, Tags)
+            query = query.join(Quote, Quote.tag_id == Tags.id)
+            records = query.filter_by(tag_id=tags_id)
+            for quote, tags in records:
+                table.rows.append([quote.text])
+            table.columns.header = ["Все записи c этим тегом"]
+            print(table)
+            session.close()
+    print("Программа завершила свою работу.")

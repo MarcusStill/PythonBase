@@ -1,10 +1,19 @@
 from api import *
-import datetime
 import asyncio
+from dataclasses import dataclass
+from loguru import logger
+import datetime
 from beautifultable import BeautifulTable
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import sessionmaker, scoped_session, relationship
 from sqlalchemy.ext.declarative import declarative_base
+
+
+@dataclass
+class Service:
+    name: str
+    url: str
+    quote_field: str
 
 
 engine = create_engine("sqlite:///quote3.db", echo=False)
@@ -64,58 +73,50 @@ if __name__ == "__main__":
         raise ValueError("Ошибка ввода! Введите 1, 2 или 3")
     else:
         if menu == 1:
-            try:
-                print(
-                    "Запрашиваем случайные цитаты с сайта favqs.com. Поиск останавливается когда номер цитаты без остатка делится на число 'n'.")
-                n = int(input('Введите число n: '))
-                k = 0
-                while k != 1:
-                    quote = asyncio.run(get_quote())
-                    id = int(quote['id'])
-                    if id % n == 0:
-                        k = 1
-                        print("Результат. Id цитаты:", quote['id'], "Автор:", quote['author'], "Теги:", quote['tags'],
-                              "Текст:", quote['body'])
-                        search_id = quote['id']
-                        search_author = quote['author']
-                        tag_list = quote['tags']
-                        if not tag_list:
-                            tag_list = '-'
-                        else:
-                            search_tag = (', '.join(tag_list))
-                        search_quote = quote['body']
-            except:
-                print("Ошибка при обращении к api. Сервис недоступен.")
+            print("Запрашиваем случайные цитаты с сайта favqs.com. Поиск останавливается когда номер цитаты без остатка делится на число 'n'.")
+            n = int(input('Введите число n: '))
+            logger.info("Начинаем получать данные с api")
+            quote = asyncio.run(get_my_quote())
+            id = int(quote['id'])
+            print("Результат. Id цитаты:", quote['id'], "Автор:", quote['author'], "Теги:", quote['tags'], "Текст:", quote['body'])
+            search_id = quote['id']
+            search_author = quote['author']
+            tag_list = quote['tags']
+            tag_list = quote['tags']
+            if tag_list == {}:
+                search_tag = '-'
             else:
-                session = Session()
-                print("Ищем в БД цитату с id", search_id)
-                s_id = session.query(Quote).filter_by(id=search_id).first()
-                if not s_id:
-                    print("Цитата не найдена. Ищем автора.")
-                    s_author = session.query(Author).filter_by(name=search_author).first()
-                    if not s_author:
-                        print("Автор не найден. Ищем tag.")
-                        s_tag = session.query(Tags).filter_by(description=search_tag).first()
-                        if not s_tag:
-                            print("Tag не найден. Записываем tag.")
-                            create_tag(search_tag)
-                        else:
-                            print("Tag найден.")
-                        print("Записываем автора.")
-                        create_author(search_author)
-                        print("Получаем id автора, tag и записываем цитату.")
-                        s_author = session.query(Author).filter_by(name=search_author).first()
-                        s_tag = session.query(Tags).filter_by(description=search_tag).first()
-                        create_quote(search_quote, s_author.id, s_tag.id)
+                search_tag = (', '.join(tag_list))
+            search_quote = quote['body']
+            session = Session()
+            print("Ищем в БД цитату с id", search_id)
+            s_id = session.query(Quote).filter_by(id=search_id).first()
+            if not s_id:
+                print("Цитата не найдена. Ищем автора.")
+                s_author = session.query(Author).filter_by(name=search_author).first()
+                if not s_author:
+                    print("Автор не найден. Ищем tag.")
+                    s_tag = session.query(Tags).filter_by(description=search_tag).first()
+                    if not s_tag:
+                        print("Tag не найден. Записываем tag.")
+                        create_tag(search_tag)
                     else:
-                        print("Автор найден.")
-                        print("Получаем id автора, tag и записываем цитату.")
-                        s_author = session.query(Author).filter_by(name=search_author).first()
-                        s_tag = session.query(Tags).filter_by(description=search_tag).first()
-                        create_quote(search_quote, s_author.id, s_tag.id)
+                        print("Tag найден.")
+                    print("Записываем автора.")
+                    create_author(search_author)
+                    print("Получаем id автора, tag и записываем цитату.")
+                    s_author = session.query(Author).filter_by(name=search_author).first()
+                    s_tag = session.query(Tags).filter_by(description=search_tag).first()
+                    create_quote(search_quote, s_author.id, s_tag.id)
                 else:
-                    print("Цитата найдена в БД. Ничего не делаем.")
-                session.close()
+                    print("Автор найден.")
+                    print("Получаем id автора, tag и записываем цитату.")
+                    s_author = session.query(Author).filter_by(name=search_author).first()
+                    s_tag = session.query(Tags).filter_by(description=search_tag).first()
+                    create_quote(search_quote, s_author.id, s_tag.id)
+            else:
+                print("Цитата найдена в БД. Ничего не делаем.")
+            session.close()
         elif menu == 2:
             session = Session()
             print("Список всех авторов, внесенных в БД.")

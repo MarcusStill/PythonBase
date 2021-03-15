@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Visitors list
+{% endblock %}
+
+
+{% block body %}
+  <h1>Visitors list</h1>
+{#  <small>Method (request.method): {{ request.method }}</small>#}
+{#  <small>endpoint {request.endpoint}: {{ request.endpoint }}</small>#}
+  <div>
+    <ul>
+      {% for visitor_id in visitors %}
+        <li>
+          <a href="{{ url_for('visitor_app.details', visitor_id=visitor_id) }}"
+          >{{ visitors[visitor_id] }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endblock %}

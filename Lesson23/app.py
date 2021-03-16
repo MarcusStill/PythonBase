@@ -1,21 +1,36 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
+
 from views.visitors import visitor_app
 
 
 app = Flask(__name__)
+
 app.register_blueprint(visitor_app, url_prefix="/visitor")
 
 
 @app.route("/")
-def greeting():
+def hello_index():
+    return render_template("index.html")
+
+
+@app.route("/demo", methods=["GET", "POST"])
+def hello_world():
     print(request.environ)
-    return "Hello, people!"
+    if request.method == "GET":
+        return "Hello, World!"
+
+    # print("data:", request.form)
+    # print("name:", request.form.get("name"))
+    # print("name list:", request.form.getlist("name"))
+
+    name = request.form.get("name")
+    return f"Hello {name}!"
 
 
-@app.route("/")
-@app.route("/<name>/")
-def hello(name="People"):
-    return f"Hello, {name}!"
+@app.route("/hello/")
+@app.route("/hello/<name>/")
+def hello(name="World"):
+    return f"Hello {name}!"
 
 
 if __name__ == "__main__":

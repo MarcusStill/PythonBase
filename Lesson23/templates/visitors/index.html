@@ -13,12 +13,22 @@
     <ul>
       {% for visitor_id in visitors %}
         <li>
-          <a href="{{ url_for('visitor_app.details', visitor_id=visitor_id) }}"
-          >{{ visitors[visitor_id] }}</a>
+          <a href="{{ url_for('visitor_app.details', visitor_id=visitor_id) }}">{{ visitors[visitor_id] }}</a>
         </li>
       {% endfor %}
     </ul>
   </div>
+
+  <div>
+    <ul>
+      {% for author in session.query(Author).order_by(Author.id) %}
+        <li>
+          {{ [author.id, author.name]  }}
+        </li>
+      {% endfor %}
+    </ul>
+  <div>
+
   <div>
     <a href="{{ url_for('visitor_app.add') }}">Add visitor</a>
   </div>

@@ -1,7 +1,15 @@
-<h2>Вы уверены, что хотите удалить {{visitor.first_name}}?</h2>
+{% extends 'base.html' %}
+
+{% block title %}
+   <h1>Удаление посетителя</h1>
+{% endblock %}
+
+{% block body %}
+<h2>Вы уверены, что хотите удалить</h2> {{visitor.first_name}} {{visitor.last_name}}?
 <form action="#" method='post'>
   <button type="submit">Удалить</button>
 </form>
 <a href='{{url_for('view_visitor')}}'>
   <button>Отменить</button>
 </a>
+ {% endblock %}

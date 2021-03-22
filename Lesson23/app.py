@@ -13,6 +13,10 @@ session = DBSession()
 
 
 @app.route('/')
+def index():
+    return render_template("index.html")
+
+
 @app.route('/visitors')
 def view_visitor():
     visitors = session.query(Visitor).all()
@@ -25,7 +29,7 @@ def new_visitor():
         new = Visitor(first_name=request.form['first_name'], last_name=request.form['last_name'], gender=request.form['gender'])
         session.add(new)
         session.commit()
-        return redirect(url_for('show_visitor'))
+        return redirect(url_for('view_visitor'))
     else:
         return render_template('new_visitor.html')
 
@@ -53,5 +57,8 @@ def del_visitor(visitor_id):
 
 
 if __name__ == '__main__':
-    app.debug = True
-    app.run(port=5000)
+    app.run(
+        host="localhost",
+        port=5000,
+        debug=True,
+    )

@@ -6,6 +6,7 @@ from sqlalchemy.orm import sessionmaker
 
 Base = declarative_base()
 
+
 class Visitor(Base):
     __tablename__ = 'visitor'
 

@@ -13,11 +13,11 @@
     <input type="text" class="form-control" name="last_name" value="{{visitor.last_name}}">
     <label for="gender">пол:</label>
     <input type="text" class="form-control" name="gender_name" value="{{visitor.gender}}">
-    <button type="submit">Обновить</button>
+    <button type="submit" class="btn btn-primary">Обновить</button>
   </div>
 </form>
 <a href='{{ url_for('view_visitor') }}'>
-  <button>Отменить</button>
+  <button class="btn btn-primary">Отменить</button>
 </a>
 
- {% endblock %}
+{% endblock %}

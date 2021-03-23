@@ -3,11 +3,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from db import Base, Visitor
 
+
 app = Flask(__name__)
+
 
 engine = create_engine('sqlite:///visitors.db?check_same_thread=False')
 Base.metadata.bind = engine
-
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 

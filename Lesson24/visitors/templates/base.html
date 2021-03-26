@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Visitors app</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <title>
+      {% block title %}
+      {% endblock %}
+    </title>
+    {% block head %}
+    {% endblock %}
+  </head>
+  <body>
+    <div class="container">
+      <div class="header clearfix">
+        <nav>
+          <ul class="nav nav-pills float-right">
+            <li class="nav-item">
+              <a class="nav-link active" href="http://localhost:5000/">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link"  href="{{ url_for('view_visitor') }}">Просмотр</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{url_for('new_visitor')}}">Добавить</a>
+            </li>
+          </ul>
+        </nav>
+        <h3 class="text-muted">Lesson23</h3>
+      </div>
+    {% block body %}
+      Base body
+      HELLO AGAIN
+    {% endblock %}
+    </div>
+    <script src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}"></script>
+  </body>
+  <footer class="footer">
+    {% block footer %}
+    {% endblock %}
+    <div><p align="center">© Visitors app 2021</p></div>
+  </footer>
+</html>

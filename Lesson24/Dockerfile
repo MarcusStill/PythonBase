@@ -2,11 +2,15 @@ FROM python:3.9.2-buster
 
 WORKDIR /var/app
 
-COPY visitors/requirements.txt requirements.txt
+RUN pip install poetry
 
-RUN pip install -r requirements.txt
+RUN poetry config virtualenvs.create false
 
-COPY visitors .
+COPY visitors/pyproject.toml visitors/poetry.lock ./
+
+RUN poetry install --no-interaction --no-ansi
+
+COPY visitors/visitors .
 
 EXPOSE 5000
 

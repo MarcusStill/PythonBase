@@ -15,8 +15,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from django.conf import settings
+from django.conf.urls.static import static
+from visitors.views import index, VisitorListView, AboutTemlateView, VisitorDetailView
 
 urlpatterns = [
-    path('visitors/', include('visitors.urls')),
+    path('', index),
     path('admin/', admin.site.urls),
+    path('visitors/', VisitorListView.as_view()),
+    path('about/', AboutTemlateView.as_view()),
+    path('visitors_full/<int:pk>/', VisitorDetailView.as_view()),
 ]
+
+# if settings.DEBUG:
+#    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

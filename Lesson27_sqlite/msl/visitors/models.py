@@ -7,6 +7,7 @@ class Visitor(models.Model):
     last_name = models.CharField(max_length=20)
     birthdate = models.DateField(("Date"), default=date.today)
     gender = models.CharField(max_length=3)
+    #image = models.ImageField(upload_to='visitor')
 
     class Meta:
         unique_together = ("first_name", "last_name")
@@ -19,14 +20,8 @@ class Ticket(models.Model):
     number = models.AutoField
     name_visitors = models.ForeignKey(Visitor, on_delete=models.CASCADE)
 
-    def __str__(self):
-        return self.number
-
 
 class Visit(models.Model):
     visit_date = models.DateField(default=date.today)
     number_ticket = models.OneToOneField(Ticket, on_delete=models.CASCADE)
     duration = models.PositiveSmallIntegerField
-
-    def __str__(self):
-        return self.number_ticket

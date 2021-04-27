@@ -1,18 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Посетители</title>
-</head>
-<body>
-<h1>{{org_name}}</h1>
-<ul>
-    {% for item in visitors %}
-    <li>
-        {{item}}
-    </li>
-        {% endfor %}
-</ul>
-</body>
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}
+Главная
+{% endblock %}
+{% block container %}
+<h1>{{org_name|upper}}</h1>
+Добро пожаловать на сайт детского развлекательного центра "Тропикано"!
+{% endblock %}
